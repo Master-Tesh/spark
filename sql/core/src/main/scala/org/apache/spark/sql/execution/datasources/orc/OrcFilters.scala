@@ -17,6 +17,9 @@
 
 package org.apache.spark.sql.execution.datasources.orc
 
+import java.util.concurrent.TimeUnit
+
+import com.google.common.cache.{CacheBuilder, CacheLoader}
 import org.apache.orc.storage.ql.io.sarg.{PredicateLeaf, SearchArgument, SearchArgumentFactory}
 import org.apache.orc.storage.ql.io.sarg.SearchArgument.Builder
 import org.apache.orc.storage.serde2.io.HiveDecimalWritable
@@ -56,6 +59,24 @@ import org.apache.spark.sql.types._
  */
 private[orc] object OrcFilters {
 
+  case class FilterWithTypeMap(filter: Filter, typeMap: Map[String, DataType])
+
+  private lazy val searchArgumentCache = CacheBuilder.newBuilder()
+    .expireAfterAccess(1, TimeUnit.MINUTES)
+    .build(
+      new CacheLoader[FilterWithTypeMap, Option[Builder]]() {
+        override def load(typeMapAndFilter: FilterWithTypeMap): Option[Builder] = {
+          buildSearchArgument(
+            typeMapAndFilter.typeMap, typeMapAndFilter.filter, SearchArgumentFactory.newBuilder())
+        }
+      })
+
+  private def getOrBuildSearchArgumentWithNewBuilder(
+      dataTypeMap: Map[String, DataType],
+      expression: Filter): Option[Builder] = {
+    searchArgumentCache.get(FilterWithTypeMap(expression, dataTypeMap))
+  }
+
   /**
    * Create ORC filter as a SearchArgument instance.
    */
@@ -66,12 +87,17 @@ private[orc] object OrcFilters {
     // collect all convertible ones to build the final `SearchArgument`.
     val convertibleFilters = for {
       filter <- filters
-      _ <- buildSearchArgument(dataTypeMap, filter, SearchArgumentFactory.newBuilder())
+      _ <- getOrBuildSearchArgumentWithNewBuilder(dataTypeMap, filter)
     } yield filter
 
     for {
       // Combines all convertible filters using `And` to produce a single conjunction
-      conjunction <- convertibleFilters.reduceOption(org.apache.spark.sql.sources.And)
+      conjunction <- convertibleFilters.reduceOption { (x, y) =>
+        val newFilter = org.apache.spark.sql.sources.And(x, y)
+        // Build in a bottom-up manner
+        getOrBuildSearchArgumentWithNewBuilder(dataTypeMap, newFilter)
+        newFilter
+      }
       // Then tries to build a single ORC `SearchArgument` for the conjunction predicate
       builder <- buildSearchArgument(dataTypeMap, conjunction, SearchArgumentFactory.newBuilder())
     } yield builder.build()
@@ -127,8 +153,6 @@ private[orc] object OrcFilters {
       dataTypeMap: Map[String, DataType],
       expression: Filter,
       builder: Builder): Option[Builder] = {
-    def newBuilder = SearchArgumentFactory.newBuilder()
-
     def getType(attribute: String): PredicateLeaf.Type =
       getPredicateLeafType(dataTypeMap(attribute))
 
@@ -144,23 +168,23 @@ private[orc] object OrcFilters {
         // Pushing one side of AND down is only safe to do at the top level.
         // You can see ParquetRelation's initializeLocalJobFunc method as an example.
         for {
-          _ <- buildSearchArgument(dataTypeMap, left, newBuilder)
-          _ <- buildSearchArgument(dataTypeMap, right, newBuilder)
+          _ <- getOrBuildSearchArgumentWithNewBuilder(dataTypeMap, left)
+          _ <- getOrBuildSearchArgumentWithNewBuilder(dataTypeMap, right)
           lhs <- buildSearchArgument(dataTypeMap, left, builder.startAnd())
           rhs <- buildSearchArgument(dataTypeMap, right, lhs)
         } yield rhs.end()
 
       case Or(left, right) =>
         for {
-          _ <- buildSearchArgument(dataTypeMap, left, newBuilder)
-          _ <- buildSearchArgument(dataTypeMap, right, newBuilder)
+          _ <- getOrBuildSearchArgumentWithNewBuilder(dataTypeMap, left)
+          _ <- getOrBuildSearchArgumentWithNewBuilder(dataTypeMap, right)
           lhs <- buildSearchArgument(dataTypeMap, left, builder.startOr())
           rhs <- buildSearchArgument(dataTypeMap, right, lhs)
         } yield rhs.end()
 
       case Not(child) =>
         for {
-          _ <- buildSearchArgument(dataTypeMap, child, newBuilder)
+          _ <- getOrBuildSearchArgumentWithNewBuilder(dataTypeMap, child)
           negate <- buildSearchArgument(dataTypeMap, child, builder.startNot())
         } yield negate.end()
 
