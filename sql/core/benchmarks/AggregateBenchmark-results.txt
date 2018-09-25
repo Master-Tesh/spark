@@ -2,153 +2,142 @@
 aggregate without grouping
 ================================================================================================
 
-Java HotSpot(TM) 64-Bit Server VM 1.8.0_151-b12 on Mac OS X 10.12.6
-Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz
-
+OpenJDK 64-Bit Server VM 1.8.0_181-b13 on Linux 3.10.0-862.3.2.el7.x86_64
+Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz
 agg w/o group:                           Best/Avg Time(ms)    Rate(M/s)   Per Row(ns)   Relative
 ------------------------------------------------------------------------------------------------
-agg w/o group wholestage off                40468 / 44934         51.8          19.3       1.0X
-agg w/o group wholestage on                    932 /  949       2249.6           0.4      43.4X
+agg w/o group wholestage off                66096 / 71975         31.7          31.5       1.0X
+agg w/o group wholestage on                   1213 / 1222       1728.8           0.6      54.5X
 
 
 ================================================================================================
 stat functions
 ================================================================================================
 
-Java HotSpot(TM) 64-Bit Server VM 1.8.0_151-b12 on Mac OS X 10.12.6
-Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz
-
+OpenJDK 64-Bit Server VM 1.8.0_181-b13 on Linux 3.10.0-862.3.2.el7.x86_64
+Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz
 stddev:                                  Best/Avg Time(ms)    Rate(M/s)   Per Row(ns)   Relative
 ------------------------------------------------------------------------------------------------
-stddev wholestage off                         6664 / 6775         15.7          63.6       1.0X
-stddev wholestage on                           907 /  923        115.6           8.6       7.3X
+stddev wholestage off                         8624 / 8744         12.2          82.2       1.0X
+stddev wholestage on                          1279 / 1284         82.0          12.2       6.7X
 
-Java HotSpot(TM) 64-Bit Server VM 1.8.0_151-b12 on Mac OS X 10.12.6
-Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz
-
+OpenJDK 64-Bit Server VM 1.8.0_181-b13 on Linux 3.10.0-862.3.2.el7.x86_64
+Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz
 kurtosis:                                Best/Avg Time(ms)    Rate(M/s)   Per Row(ns)   Relative
 ------------------------------------------------------------------------------------------------
-kurtosis wholestage off                     31339 / 31357          3.3         298.9       1.0X
-kurtosis wholestage on                         982 /  997        106.8           9.4      31.9X
+kurtosis wholestage off                     40576 / 40642          2.6         387.0       1.0X
+kurtosis wholestage on                        1364 / 1379         76.8          13.0      29.7X
 
 
 ================================================================================================
 aggregate with linear keys
 ================================================================================================
 
-Java HotSpot(TM) 64-Bit Server VM 1.8.0_151-b12 on Mac OS X 10.12.6
-Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz
-
+OpenJDK 64-Bit Server VM 1.8.0_181-b13 on Linux 3.10.0-862.3.2.el7.x86_64
+Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz
 Aggregate w keys:                        Best/Avg Time(ms)    Rate(M/s)   Per Row(ns)   Relative
 ------------------------------------------------------------------------------------------------
-codegen = F                                   9667 / 9936          8.7         115.2       1.0X
-codegen = T hashmap = F                       4537 / 5353         18.5          54.1       2.1X
-codegen = T hashmap = T                        924 /  946         90.8          11.0      10.5X
+codegen = F                                   9427 / 9541          8.9         112.4       1.0X
+codegen = T hashmap = F                       4635 / 4659         18.1          55.3       2.0X
+codegen = T hashmap = T                       1265 / 1325         66.3          15.1       7.5X
 
 
 ================================================================================================
 aggregate with randomized keys
 ================================================================================================
 
-Java HotSpot(TM) 64-Bit Server VM 1.8.0_151-b12 on Mac OS X 10.12.6
-Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz
-
+OpenJDK 64-Bit Server VM 1.8.0_181-b13 on Linux 3.10.0-862.3.2.el7.x86_64
+Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz
 Aggregate w keys:                        Best/Avg Time(ms)    Rate(M/s)   Per Row(ns)   Relative
 ------------------------------------------------------------------------------------------------
-codegen = F                                   9298 / 9300          9.0         110.8       1.0X
-codegen = T hashmap = F                       5357 / 5405         15.7          63.9       1.7X
-codegen = T hashmap = T                       1705 / 1860         49.2          20.3       5.5X
+codegen = F                                 10951 / 11038          7.7         130.6       1.0X
+codegen = T hashmap = F                       6440 / 6510         13.0          76.8       1.7X
+codegen = T hashmap = T                       2368 / 2386         35.4          28.2       4.6X
 
 
 ================================================================================================
 aggregate with string key
 ================================================================================================
 
-Java HotSpot(TM) 64-Bit Server VM 1.8.0_151-b12 on Mac OS X 10.12.6
-Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz
-
+OpenJDK 64-Bit Server VM 1.8.0_181-b13 on Linux 3.10.0-862.3.2.el7.x86_64
+Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz
 Aggregate w string key:                  Best/Avg Time(ms)    Rate(M/s)   Per Row(ns)   Relative
 ------------------------------------------------------------------------------------------------
-codegen = F                                   4019 / 4083          5.2         191.7       1.0X
-codegen = T hashmap = F                       2743 / 2797          7.6         130.8       1.5X
-codegen = T hashmap = T                       1907 / 1955         11.0          91.0       2.1X
+codegen = F                                   5092 / 5138          4.1         242.8       1.0X
+codegen = T hashmap = F                       3512 / 3530          6.0         167.5       1.4X
+codegen = T hashmap = T                       2586 / 2608          8.1         123.3       2.0X
 
 
 ================================================================================================
 aggregate with decimal key
 ================================================================================================
 
-Java HotSpot(TM) 64-Bit Server VM 1.8.0_151-b12 on Mac OS X 10.12.6
-Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz
-
+OpenJDK 64-Bit Server VM 1.8.0_181-b13 on Linux 3.10.0-862.3.2.el7.x86_64
+Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz
 Aggregate w decimal key:                 Best/Avg Time(ms)    Rate(M/s)   Per Row(ns)   Relative
 ------------------------------------------------------------------------------------------------
-codegen = F                                   3229 / 3313          6.5         154.0       1.0X
-codegen = T hashmap = F                       2732 / 2826          7.7         130.3       1.2X
-codegen = T hashmap = T                        435 /  447         48.2          20.7       7.4X
+codegen = F                                   3203 / 3284          6.5         152.7       1.0X
+codegen = T hashmap = F                       1667 / 1682         12.6          79.5       1.9X
+codegen = T hashmap = T                        593 /  595         35.4          28.3       5.4X
 
 
 ================================================================================================
 aggregate with multiple key types
 ================================================================================================
 
-Java HotSpot(TM) 64-Bit Server VM 1.8.0_151-b12 on Mac OS X 10.12.6
-Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz
-
+OpenJDK 64-Bit Server VM 1.8.0_181-b13 on Linux 3.10.0-862.3.2.el7.x86_64
+Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz
 Aggregate w multiple keys:               Best/Avg Time(ms)    Rate(M/s)   Per Row(ns)   Relative
 ------------------------------------------------------------------------------------------------
-codegen = F                                   6326 / 6800          3.3         301.6       1.0X
-codegen = T hashmap = F                       3915 / 4050          5.4         186.7       1.6X
-codegen = T hashmap = T                       2972 / 3054          7.1         141.7       2.1X
+codegen = F                                   7449 / 7507          2.8         355.2       1.0X
+codegen = T hashmap = F                       5264 / 5301          4.0         251.0       1.4X
+codegen = T hashmap = T                       3955 / 3987          5.3         188.6       1.9X
 
 
 ================================================================================================
 max function bytecode size of wholestagecodegen
 ================================================================================================
 
-Java HotSpot(TM) 64-Bit Server VM 1.8.0_151-b12 on Mac OS X 10.12.6
-Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz
-
+OpenJDK 64-Bit Server VM 1.8.0_181-b13 on Linux 3.10.0-862.3.2.el7.x86_64
+Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz
 max function bytecode size:              Best/Avg Time(ms)    Rate(M/s)   Per Row(ns)   Relative
 ------------------------------------------------------------------------------------------------
-codegen = F                                    436 /  518          1.5         664.6       1.0X
-codegen = T hugeMethodLimit = 10000            259 /  406          2.5         394.8       1.7X
-codegen = T hugeMethodLimit = 1500             458 /  733          1.4         698.4       1.0X
+codegen = F                                    638 /  661          1.0         973.1       1.0X
+codegen = T hugeMethodLimit = 10000            411 /  448          1.6         626.5       1.6X
+codegen = T hugeMethodLimit = 1500             664 /  688          1.0        1013.7       1.0X
 
 
 ================================================================================================
 cube
 ================================================================================================
 
-Java HotSpot(TM) 64-Bit Server VM 1.8.0_151-b12 on Mac OS X 10.12.6
-Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz
-
+OpenJDK 64-Bit Server VM 1.8.0_181-b13 on Linux 3.10.0-862.3.2.el7.x86_64
+Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz
 cube:                                    Best/Avg Time(ms)    Rate(M/s)   Per Row(ns)   Relative
 ------------------------------------------------------------------------------------------------
-cube wholestage off                           2957 / 2985          1.8         564.1       1.0X
-cube wholestage on                            1146 / 1675          4.6         218.5       2.6X
+cube wholestage off                           3170 / 3174          1.7         604.6       1.0X
+cube wholestage on                            1309 / 1339          4.0         249.6       2.4X
 
 
 ================================================================================================
 hash and BytesToBytesMap
 ================================================================================================
 
-Java HotSpot(TM) 64-Bit Server VM 1.8.0_151-b12 on Mac OS X 10.12.6
-Intel(R) Core(TM) i7-7820HQ CPU @ 2.90GHz
-
+OpenJDK 64-Bit Server VM 1.8.0_181-b13 on Linux 3.10.0-862.3.2.el7.x86_64
+Intel(R) Xeon(R) CPU E5-2670 v2 @ 2.50GHz
 BytesToBytesMap:                         Best/Avg Time(ms)    Rate(M/s)   Per Row(ns)   Relative
 ------------------------------------------------------------------------------------------------
-UnsafeRowhash                                  224 /  244         93.8          10.7       1.0X
-murmur3 hash                                   114 /  134        184.2           5.4       2.0X
-fast hash                                       61 /   66        342.8           2.9       3.7X
-arrayEqual                                     150 /  229        139.5           7.2       1.5X
-Java HashMap (Long)                            127 /  305        164.7           6.1       1.8X
-Java HashMap (two ints)                         99 /  156        212.6           4.7       2.3X
-Java HashMap (UnsafeRow)                      1048 / 1472         20.0          50.0       0.2X
-LongToUnsafeRowMap (opt=false)                 517 /  771         40.6          24.7       0.4X
-LongToUnsafeRowMap (opt=true)                   90 /  107        234.1           4.3       2.5X
-BytesToBytesMap (off Heap)                    1417 / 1451         14.8          67.6       0.2X
-BytesToBytesMap (on Heap)                      934 / 1014         22.4          44.6       0.2X
-Aggregate HashMap                               38 /   42        558.6           1.8       6.0X
+UnsafeRowhash                                  329 /  331         63.7          15.7       1.0X
+murmur3 hash                                   168 /  168        124.9           8.0       2.0X
+fast hash                                       84 /   86        248.2           4.0       3.9X
+arrayEqual                                     193 /  193        108.8           9.2       1.7X
+Java HashMap (Long)                            145 /  148        144.8           6.9       2.3X
+Java HashMap (two ints)                        149 /  153        141.1           7.1       2.2X
+Java HashMap (UnsafeRow)                       824 /  846         25.4          39.3       0.4X
+LongToUnsafeRowMap (opt=false)                 461 /  464         45.5          22.0       0.7X
+LongToUnsafeRowMap (opt=true)                  126 /  127        165.9           6.0       2.6X
+BytesToBytesMap (off Heap)                     920 /  929         22.8          43.9       0.4X
+BytesToBytesMap (on Heap)                      906 /  913         23.1          43.2       0.4X
+Aggregate HashMap                               56 /   57        371.7           2.7       5.8X
 
 
