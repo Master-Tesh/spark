@@ -74,6 +74,8 @@ class JsonReadSchemaSuite
   extends ReadSchemaSuite
   with AddColumnIntoTheMiddleTest
   with HideColumnInTheMiddleTest
+  with AddNestedColumnTest
+  with HideNestedColumnTest
   with ChangePositionTest
   with IntegralTypeTest
   with ToDoubleTypeTest
@@ -87,6 +89,8 @@ class OrcReadSchemaSuite
   extends ReadSchemaSuite
   with AddColumnIntoTheMiddleTest
   with HideColumnInTheMiddleTest
+  with AddNestedColumnTest
+  with HideNestedColumnTest
   with ChangePositionTest {
 
   override val format: String = "orc"
@@ -107,6 +111,8 @@ class VectorizedOrcReadSchemaSuite
   extends ReadSchemaSuite
   with AddColumnIntoTheMiddleTest
   with HideColumnInTheMiddleTest
+  with AddNestedColumnTest
+  with HideNestedColumnTest
   with ChangePositionTest
   with BooleanTypeTest
   with IntegralTypeTest
@@ -130,6 +136,8 @@ class ParquetReadSchemaSuite
   extends ReadSchemaSuite
   with AddColumnIntoTheMiddleTest
   with HideColumnInTheMiddleTest
+  with AddNestedColumnTest
+  with HideNestedColumnTest
   with ChangePositionTest {
 
   override val format: String = "parquet"
@@ -150,6 +158,8 @@ class VectorizedParquetReadSchemaSuite
   extends ReadSchemaSuite
   with AddColumnIntoTheMiddleTest
   with HideColumnInTheMiddleTest
+  with AddNestedColumnTest
+  with HideNestedColumnTest
   with ChangePositionTest {
 
   override val format: String = "parquet"
@@ -170,6 +180,8 @@ class MergedParquetReadSchemaSuite
   extends ReadSchemaSuite
   with AddColumnIntoTheMiddleTest
   with HideColumnInTheMiddleTest
+  with AddNestedColumnTest
+  with HideNestedColumnTest
   with ChangePositionTest {
 
   override val format: String = "parquet"
