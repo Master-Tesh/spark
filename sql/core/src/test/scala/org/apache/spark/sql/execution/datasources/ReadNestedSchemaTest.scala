@@ -27,7 +27,7 @@ import org.apache.spark.sql.Row
  */
 trait AddNestedColumnTest extends ReadSchemaTest {
 
-  test("add nested column at the end of the leaf struct column") {
+  test("add a nested column at the end of the leaf struct column") {
     withTempPath { dir =>
       val path = dir.getCanonicalPath
 
@@ -53,7 +53,7 @@ trait AddNestedColumnTest extends ReadSchemaTest {
     }
   }
 
-  test("add nested column in the middle of the leaf struct column") {
+  test("add a nested column in the middle of the leaf struct column") {
     withTempPath { dir =>
       val path = dir.getCanonicalPath
 
@@ -79,7 +79,7 @@ trait AddNestedColumnTest extends ReadSchemaTest {
     }
   }
 
-  test("add nested column at the end of the middle struct column") {
+  test("add a nested column at the end of the middle struct column") {
     withTempPath { dir =>
       val path = dir.getCanonicalPath
 
@@ -105,7 +105,7 @@ trait AddNestedColumnTest extends ReadSchemaTest {
     }
   }
 
-  test("add nested column in the middle of the middle struct column") {
+  test("add a nested column in the middle of the middle struct column") {
     withTempPath { dir =>
       val path = dir.getCanonicalPath
 
@@ -137,7 +137,7 @@ trait AddNestedColumnTest extends ReadSchemaTest {
  */
 trait HideNestedColumnTest extends ReadSchemaTest {
 
-  test("hide nested column at the end of the leaf struct column") {
+  test("hide a nested column at the end of the leaf struct column") {
     withTempPath { dir =>
       val path = dir.getCanonicalPath
 
@@ -163,7 +163,7 @@ trait HideNestedColumnTest extends ReadSchemaTest {
     }
   }
 
-  test("hide nested column in the middle of the leaf struct column") {
+  test("hide a nested column in the middle of the leaf struct column") {
     withTempPath { dir =>
       val path = dir.getCanonicalPath
 
@@ -189,7 +189,7 @@ trait HideNestedColumnTest extends ReadSchemaTest {
     }
   }
 
-  test("hide nested column at the end of the middle struct column") {
+  test("hide a nested column at the end of the middle struct column") {
     withTempPath { dir =>
       val path = dir.getCanonicalPath
 
@@ -215,7 +215,7 @@ trait HideNestedColumnTest extends ReadSchemaTest {
     }
   }
 
-  test("hide nested column in the middle of the middle struct column") {
+  test("hide a nested column in the middle of the middle struct column") {
     withTempPath { dir =>
       val path = dir.getCanonicalPath
 
