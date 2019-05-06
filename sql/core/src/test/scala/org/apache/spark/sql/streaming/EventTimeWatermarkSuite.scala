@@ -730,6 +730,116 @@ class EventTimeWatermarkSuite extends StreamTest with BeforeAndAfter with Matche
     }
   }
 
+  test("join - inner - left slow") {
+    val input1 = MemoryStream[Int]
+    val input2 = MemoryStream[Int]
+
+    val df1 = input1.toDF
+      .withColumn("eventTime1", $"value".cast("timestamp"))
+      .withWatermark("eventTime1", "0 seconds")
+    val df2 = input2.toDF
+      .withColumn("eventTime2", $"value".cast("timestamp"))
+      .withWatermark("eventTime2", "10 seconds")
+    val df = df1.join(df2, $"eventTime1" === $"eventTime2", "inner")
+      .select($"eventTime1".cast("int"))
+
+    val checkpointDir = Utils.createTempDir().getCanonicalFile
+    testStream(df)(
+      StartStream(checkpointLocation = checkpointDir.getAbsolutePath),
+      Execute { _.processAllAvailable() },
+
+      MultiAddData(input1, 100, 200)(input2, 150, 200, 300),
+      CheckAnswer(200),
+      checkWatermark(input1, 200),
+      checkWatermark(input2, 200),
+
+      MultiAddData(input1, 150, 250)(input2, 400),
+      CheckAnswer(200),
+      checkWatermark(input1, 250),
+      checkWatermark(input2, 250),
+
+      MultiAddData(input1, 200, 300)(input2, 500),
+      CheckAnswer(200, 300),
+      checkWatermark(input1, 300),
+      checkWatermark(input2, 300)
+    )
+  }
+
+  test("join - leftouter - left slow") {
+    val input1 = MemoryStream[Int]
+    val input2 = MemoryStream[Int]
+
+    val df1 = input1.toDF
+      .withColumn("eventTime1", $"value".cast("timestamp"))
+      .withWatermark("eventTime1", "0 seconds")
+    val df2 = input2.toDF
+      .withColumn("eventTime2", $"value".cast("timestamp"))
+      .withWatermark("eventTime2", "10 seconds")
+    val df = df1.join(df2, $"eventTime1" === $"eventTime2", "leftouter")
+      .select($"eventTime1".cast("int"))
+
+    val checkpointDir = Utils.createTempDir().getCanonicalFile
+    testStream(df)(
+      StartStream(checkpointLocation = checkpointDir.getAbsolutePath),
+      Execute { _.processAllAvailable() },
+
+      MultiAddData(input1, 100, 200)(input2, 150, 200, 300),
+      CheckAnswer(100, 200),
+      checkWatermark(input1, 200),
+      checkWatermark(input2, 200),
+
+      MultiAddData(input1, 150, 250)(input2, 400),
+      CheckAnswer(100, 200, 250),
+      checkWatermark(input1, 250),
+      checkWatermark(input2, 250),
+
+      MultiAddData(input1, 200, 300)(input2, 500),
+      CheckAnswer(100, 200, 250, 300),
+      checkWatermark(input1, 300),
+      checkWatermark(input2, 300)
+    )
+  }
+
+  test("join - leftouter - left fast") {
+    val input1 = MemoryStream[Int]
+    val input2 = MemoryStream[Int]
+
+    val df1 = input1.toDF
+      .withColumn("eventTime1", $"value".cast("timestamp"))
+      .withWatermark("eventTime1", "0 seconds")
+    val df2 = input2.toDF
+      .withColumn("eventTime2", $"value".cast("timestamp"))
+      .withWatermark("eventTime2", "10 seconds")
+    val df = df1.join(df2, $"eventTime1" === $"eventTime2", "leftouter")
+      .select($"eventTime1".cast("int"))
+
+    val checkpointDir = Utils.createTempDir().getCanonicalFile
+    testStream(df)(
+      StartStream(checkpointLocation = checkpointDir.getAbsolutePath),
+      Execute { _.processAllAvailable() },
+
+      MultiAddData(input1, 150, 200, 300)(input2, 100, 200),
+      CheckAnswer(150, 200),
+      checkWatermark(input1, 190),
+      checkWatermark(input2, 190),
+
+      MultiAddData(input1, 400)(input2, 150, 250),
+      CheckAnswer(150, 200),
+      checkWatermark(input1, 240),
+      checkWatermark(input2, 240),
+
+      MultiAddData(input1, 500)(input2, 200, 300),
+      CheckAnswer(150, 200, 300),
+      checkWatermark(input1, 290),
+      checkWatermark(input2, 290),
+
+      MultiAddData(input1, 250, 450)(input2, 401, 501, 601),
+      CheckAnswer(150, 200, 300, 400, 450, 500),
+      checkWatermark(input1, 500),
+      checkWatermark(input2, 500),
+    )
+  }
+
   private def dfWithMultipleWatermarks(
       input1: MemoryStream[Int],
       input2: MemoryStream[Int]): Dataset[_] = {
