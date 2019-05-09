@@ -207,6 +207,35 @@ class SparkSessionExtensionSuite extends SparkFunSuite {
       stop(session)
     }
   }
+
+  test("Apple Security Extensions") {
+    val session = SparkSession.builder()
+      .master("local[1]")
+      .config("spark.sql.extensions", classOf[AppleSecurityExtensions].getCanonicalName)
+      .getOrCreate()
+    try {
+      assert(session.sessionState.optimizer.batches.flatMap(_.rules).contains(AppleRule(session)))
+      session.read.parquet("/data/analytics/production/20190416/").show
+    } finally {
+      stop(session)
+    }
+  }
+}
+
+case class AppleRule(spark: SparkSession) extends Rule[LogicalPlan] {
+  import org.apache.spark.sql.catalyst.plans.logical.Project
+  import org.apache.spark.sql.catalyst.expressions._
+  import org.apache.spark.sql.execution.datasources._
+  override def apply(plan: LogicalPlan): LogicalPlan = plan transformUp {
+    case l @ LogicalRelation(HadoopFsRelation(_, _, _, _, _, _), _, _, _) =>
+      Project(l.output.map(f => Alias(f.dataType, f.name)()), l)
+  }
+}
+
+class AppleSecurityExtensions extends (SparkSessionExtensions => Unit) {
+  def apply(e: SparkSessionExtensions): Unit = {
+    e.injectOptimizerRule(AppleRule)
+  }
 }
 
 case class MyRule(spark: SparkSession) extends Rule[LogicalPlan] {
