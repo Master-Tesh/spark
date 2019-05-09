@@ -68,7 +68,6 @@ public class ZStandardCodec implements
           + "not available: this version of libhadoop was built "
           + "without zstd support.");
     }
-    */
     if (!ZStandardCompressor.isNativeCodeLoaded()) {
       throw new RuntimeException("native zStandard library not "
           + "available: ZStandardCompressor has not been loaded.");
@@ -77,6 +76,7 @@ public class ZStandardCodec implements
       throw new RuntimeException("native zStandard library not "
           + "available: ZStandardDecompressor has not been loaded.");
     }
+    */
   }
 
   public static boolean isNativeCodeLoaded() {
