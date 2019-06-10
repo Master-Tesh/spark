@@ -54,10 +54,17 @@ class NestedColumnAliasingSuite extends SchemaPruningTest {
       val expected = op(contact.select(middle)).analyze
       comparePlans(optimized, expected)
     }
-
     testSingleFieldPushDown((input: LogicalPlan) => input.limit(5))
     testSingleFieldPushDown((input: LogicalPlan) => input.repartition(1))
     testSingleFieldPushDown((input: LogicalPlan) => Sample(0.0, 0.6, false, 11L, input))
+  }
+
+  test("Pushing a single nested field projection on aggregation") {
+    val middle = GetStructField('name, 1, Some("middle"))
+    val query = contact.groupBy(middle)(sum(middle))
+    val optimized = Optimize.execute(query)
+    val expected = contact.select(middle).groupBy(middle)(middle).analyze
+    comparePlans(optimized, expected)
   }
 
   test("Pushing multiple nested field projection") {
